@@ -1,0 +1,1697 @@
+{
+  "name": "FINANCE OS TELE PUSAT",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        288
+      ],
+      "id": "634ef5af-7fd2-4b20-b543-95c0fa5b6b4b",
+      "name": "Telegram Trigger",
+      "webhookId": "762fe045-002b-4f52-abd5-656b74499494",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0fefcf52-99d7-47f0-82fd-07ce0d4de95f",
+                    "leftValue": "={{ $('Telegram Trigger').first().json.message.text.toLowerCase() }}",
+                    "rightValue": "laporan",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b94498c4-6a8c-4f01-b02d-acf14d826d88",
+                    "leftValue": "={{ Object.keys($('Telegram Trigger').first().json.message).includes('voice') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "28cefa30-b5ce-4bb8-94d3-f5eee225fb29",
+                    "leftValue": "={{ Object.keys($('Telegram Trigger').first().json.message).includes('photo') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ Object.keys($('Telegram Trigger').first().json.message).includes('text') }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "0542e119-3776-45c7-a057-ff16d5e3b43e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        272
+      ],
+      "id": "59388520-a199-490e-9554-30143a4b862d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"model\":\"llama-3.3-70b-versatile\",\"messages\":[{\"role\":\"system\",\"content\":\"Kamu adalah asisten keuangan pribadi. Ekstrak data keuangan dari input (teks, struk, atau transkripsi suara). Jika beberapa transaksi kembalikan ARRAY JSON. Jika satu transaksi kembalikan OBJECT JSON. Format setiap item: {\\\"tipe\\\":\\\"Pemasukan\\\" atau \\\"Pengeluaran\\\",\\\"nominal\\\":angka bulat tanpa titik atau koma,\\\"kategori\\\":\\\"pilih HANYA dari: BBM atau Konsumsi atau ATK atau Perawatan atau Utilitas atau Transport atau Shopping atau Lainnya. Konsumsi untuk semua makanan minuman jajan. BBM untuk bensin solar. ATK untuk alat tulis kantor. Perawatan untuk servis perbaikan kesehatan. Utilitas untuk listrik air internet. Transport untuk ojek angkot bus tiket. Shopping untuk belanja barang.\\\",\\\"sub_kategori\\\":\\\"sub kategori spesifik atau kosong\\\",\\\"deskripsi\\\":\\\"deskripsi singkat transaksi\\\",\\\"tanggal\\\":\\\"YYYY-MM-DD\\\",\\\"dompet\\\":\\\"nama bank atau dompet digital jika disebutkan contoh BRI BCA OVO GoPay Dana Mandiri atau kosong\\\",\\\"transfer_ke\\\":\\\"tujuan transfer jika ada atau kosong\\\",\\\"metode_bayar\\\":\\\"Cash atau Transfer atau QRIS atau Debit atau Kredit atau kosong\\\",\\\"sumber_pemasukan\\\":\\\"sumber dana jika pemasukan atau kosong\\\",\\\"vendor\\\":\\\"nama toko atau penjual jika ada atau kosong\\\",\\\"catatan\\\":\\\"info tambahan atau kosong\\\",\\\"tag\\\":\\\"tag singkat atau kosong\\\"}. Tanggal tidak disebutkan gunakan {{ $now.toISO().slice(0,10) }}. Kembalikan HANYA JSON tanpa teks lain tanpa markdown.\"},{\"role\":\"user\",\"content\":\"{{ $('Edit Fields').first().json.cleanText }}\"}]}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        512
+      ],
+      "id": "4527c241-cc41-4a66-988f-7cc60b1902d8",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hbRF2sXlFx5RufMc",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.choices[0].message.content;\n\nlet cleaned = raw.trim()\n  .replace(/```json/g, '')\n  .replace(/```/g, '')\n  .replace(/[\\r\\n]+/g, ' ')\n  .replace(/\\t/g, ' ')\n  .trim();\n\nlet data;\ntry {\n  data = JSON.parse(cleaned);\n} catch(e) {\n  const match = cleaned.match(/[\\[\\{][\\s\\S]*[\\]\\}]/);\n  if (match) {\n    try {\n      data = JSON.parse(match[0]);\n    } catch(e2) {\n      throw new Error('JSON tidak valid: ' + cleaned.substring(0, 300));\n    }\n  } else {\n    throw new Error('Tidak ada JSON ditemukan: ' + cleaned.substring(0, 300));\n  }\n}\n\nif (!Array.isArray(data)) data = [data];\n\nconst now = new Date();\n\nreturn data.map(item => {\n  const tanggalStr = item.tanggal || new Date().toISOString().slice(0,10);\n  const tanggal = new Date(tanggalStr);\n  const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][tanggal.getDay()];\n  return {\n    json: {\n      id_transaksi: `TRX-${tanggalStr.replace(/-/g,'')}-${Math.floor(Math.random()*900000)+100000}`,\n      waktu_input: now.toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'}),\n      tanggal: tanggalStr,\n      bulan: tanggal.getMonth() + 1,\n      tahun: tanggal.getFullYear(),\n      hari: hari,\n      tipe: item.tipe || \"\",\n      status: \"VALID\",\n      kategori: item.kategori || \"\",\n      sub_kategori: item.sub_kategori || \"\",\n      deskripsi: item.deskripsi || \"\",\n      nominal: Number(item.nominal) || 0,\n      dompet: item.dompet || \"\",\n      transfer_ke: item.transfer_ke || \"\",\n      metode_bayar: item.metode_bayar || \"\",\n      sumber_pemasukan: item.sumber_pemasukan || \"\",\n      vendor: item.vendor || \"\",\n      catatan: item.catatan || \"\",\n      tag: item.tag || \"\",\n      dibuat_oleh: String($('Telegram Trigger').first().json.message.from.id || \"\")\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        512
+      ],
+      "id": "e7e14214-4e02-4260-8f0f-04991e9f476d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/{{ $('Get row(s) in sheet1').first().json['Sheet ID Google'] }}/edit",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1814937993,
+          "mode": "list",
+          "cachedResultName": "DATA_TRANSAKSI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvbCZuH_Crkh3vUb7bOj_0yhwjaEBw2ygHai7JtCbZQ/edit#gid=1814937993"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID Transaksi": "={{ $json.id_transaksi }}",
+            "Waktu Input": "={{ $json.waktu_input }}",
+            "Tanggal": "={{ $json.tanggal }}",
+            "Bulan": "={{ $json.bulan }}",
+            "Tahun": "={{ $json.tahun }}",
+            "Hari": "={{ $json.hari }}",
+            "Tipe": "={{ $json.tipe }}",
+            "Status": "={{ $json.status }}",
+            "Kategori": "={{ $json.kategori }}",
+            "Sub-Kategori": "={{ $json.sub_kategori }}",
+            "Deskripsi": "={{ $json.deskripsi }}",
+            "Nominal": "={{ $json.nominal }}",
+            "Dompet": "={{ $json.dompet }}",
+            "Transfer Ke": "={{ $json.transfer_ke }}",
+            "Metode Bayar": "={{ $json.metode_bayar }}",
+            "Sumber Pemasukan": "={{ $json.sumber_pemasukan }}",
+            "Vendor": "={{ $json.vendor }}",
+            "Catatan": "={{ $json.catatan }}",
+            "Tag": "={{ $json.tag }}",
+            "Dibuat Oleh": "={{ $json.dibuat_oleh }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID Transaksi",
+              "displayName": "ID Transaksi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Waktu Input",
+              "displayName": "Waktu Input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bulan",
+              "displayName": "Bulan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tahun",
+              "displayName": "Tahun",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hari",
+              "displayName": "Hari",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipe",
+              "displayName": "Tipe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Kategori",
+              "displayName": "Kategori",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sub-Kategori",
+              "displayName": "Sub-Kategori",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Deskripsi",
+              "displayName": "Deskripsi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nominal",
+              "displayName": "Nominal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dompet",
+              "displayName": "Dompet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Transfer Ke",
+              "displayName": "Transfer Ke",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Metode Bayar",
+              "displayName": "Metode Bayar",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sumber Pemasukan",
+              "displayName": "Sumber Pemasukan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor",
+              "displayName": "Vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Catatan",
+              "displayName": "Catatan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tag",
+              "displayName": "Tag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dibuat Oleh",
+              "displayName": "Dibuat Oleh",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1008,
+        512
+      ],
+      "id": "747d882c-cec9-416a-bbfd-60e66cb3e305",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MvLHS5YbyQnz7KUQ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1472,
+        512
+      ],
+      "id": "1d9c1112-d987-484e-9b8c-dfb562f5e161",
+      "name": "Send a text message",
+      "webhookId": "ea10d601-ad4d-4af7-a977-db1ce3a60079",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f62b59d0-c6ff-4a73-81d4-33e96debf57a",
+              "name": "cleanText",
+              "value": "=={{ $('Code in JavaScript6').isExecuted ? $('Code in JavaScript6').first().json.message.text.replace(/\\n/g, ' ').replace(/\\r/g, ' ').replace(/\"/g, \"'\") : $('Telegram Trigger').first().json.message.text.replace(/\\n/g, ' ').replace(/\\r/g, ' ').replace(/\"/g, \"'\") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        368,
+        512
+      ],
+      "id": "f6c1b3fe-aa5f-4678-96ec-e2cd208c04b2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $('Code in JavaScript').all().map(i => i.json);\nconst count = items.length;\nconst escape = (str) => String(str).replace(/[_*[\\]()~`>#+\\-=|{}.!\\\\]/g, '\\\\$&');\nlet text = '';\nif (count <= 10) {\n  const total = items.reduce((sum, i) => sum + i.nominal, 0);\n  const rincian = items.map((item) => {\n    let meta = '📂 ' + escape(item.kategori);\n    if (item.dompet) meta += ' \\\\| 💳 ' + escape(item.dompet);\n    if (item.sumber_pemasukan) meta += ' \\\\| 👤 ' + escape(item.sumber_pemasukan);\n    return escape(item.deskripsi) + ' — Rp ' + escape(item.nominal.toLocaleString('id-ID')) + '\\n' + meta;\n  }).join('\\n');\n  text = '✅ ' + escape(count) + ' transaksi berhasil dicatat\\\\!\\n\\n📋 Rincian:\\n' + rincian + '\\n\\n💰 Total: Rp ' + escape(total.toLocaleString('id-ID'));\n} else {\n  const total = items.reduce((sum, i) => sum + i.nominal, 0);\n  text = '✅ ' + escape(count) + ' transaksi berhasil dicatat\\\\!\\n\\n💰 Total: Rp ' + escape(total.toLocaleString('id-ID'));\n}\nreturn [{ json: { summary: text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        512
+      ],
+      "id": "3478b9c2-6817-457d-8a4f-132a76ed2cdf",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.telegram.org/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/getFile",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "file_id",
+              "value": "={{ $('Telegram Trigger').first().json.message.photo[$('Telegram Trigger').first().json.message.photo.length - 1].file_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        336
+      ],
+      "id": "d6352d07-01f8-4d8b-b689-57811cccbad1",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/{{$json.result.file_path}}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        784,
+        336
+      ],
+      "id": "1fa2ec50-9c21-4c66-974e-0330d9b76732",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{$json.body}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1232,
+        336
+      ],
+      "id": "d3dc640e-60d8-4bca-b38e-fb0ef348d324",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hbRF2sXlFx5RufMc",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryBuffer = await this.helpers.getBinaryDataBuffer(0, 'data');\nconst base64Image = binaryBuffer.toString('base64');\nreturn [{\n  json: {\n    body: {\n      model: \"meta-llama/llama-4-scout-17b-16e-instruct\",\n      max_tokens: 2000,\n      messages: [{\n        role: \"user\",\n        content: [\n          {\n            type: \"image_url\",\n            image_url: {\n              url: `data:image/jpeg;base64,${base64Image}`\n            }\n          },\n          {\n            type: \"text\",\n            text: \"Kamu adalah asisten keuangan. Baca struk/nota ini dengan teliti.\\n\\nJika ini adalah struk belanja dengan banyak item, catat sebagai 1 transaksi dengan nominal = TOTAL yang dibayar.\\n\\nIsi setiap field dengan lengkap:\\n- vendor: nama toko/restoran yang tertera di struk\\n- deskripsi: ringkasan item yang dibeli, contoh: Bread Butter Pudding, Cream Bruille, dll\\n- metode_bayar: metode pembayaran yang tertera, contoh: Debit BCA, Cash, OVO\\n- dompet: sesuaikan dengan metode bayar, contoh: BCA, OVO, Cash\\n- tanggal: tanggal transaksi dari struk\\n\\nBalas HANYA dengan JSON array murni, tanpa markdown, tanpa penjelasan, tanpa backtick.\\n\\nFormat:\\n[{\\\"tipe\\\":\\\"Pengeluaran\\\",\\\"nominal\\\":0,\\\"kategori\\\":\\\"\\\",\\\"sub_kategori\\\":\\\"\\\",\\\"deskripsi\\\":\\\"\\\",\\\"tanggal\\\":\\\"\\\",\\\"dompet\\\":\\\"\\\",\\\"transfer_ke\\\":\\\"\\\",\\\"metode_bayar\\\":\\\"\\\",\\\"sumber_pemasukan\\\":\\\"\\\",\\\"vendor\\\":\\\"\\\",\\\"catatan\\\":\\\"\\\",\\\"tag\\\":\\\"\\\"}]\\n\\nKategori: BBM, Konsumsi, ATK, Perawatan, Utilitas, Transport, Shopping, Lainnya\\nFormat tanggal: YYYY-MM-DD\\nNominal harus angka tanpa titik/koma, contoh: 43500\\nJika info tidak ada, isi string kosong.\"\n          }\n        ]\n      }]\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        336
+      ],
+      "id": "efc238d5-8dee-4dea-8b22-b18dc78a73dd",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.choices[0].message.content;\n\nlet cleaned = raw.trim()\n  .replace(/```json/g, '')\n  .replace(/```/g, '')\n  .replace(/[\\r\\n]+/g, ' ')\n  .replace(/\\t/g, ' ')\n  .trim();\n\nlet data;\ntry {\n  data = JSON.parse(cleaned);\n} catch(e) {\n  const match = cleaned.match(/[\\[\\{][\\s\\S]*[\\]\\}]/);\n  if (match) {\n    try {\n      data = JSON.parse(match[0]);\n    } catch(e2) {\n      throw new Error('JSON tidak valid: ' + cleaned.substring(0, 300));\n    }\n  } else {\n    throw new Error('Tidak ada JSON ditemukan: ' + cleaned.substring(0, 300));\n  }\n}\n\nif (!Array.isArray(data)) data = [data];\n\nconst now = new Date();\n\nreturn data.map(item => {\n  const tanggalStr = item.tanggal || new Date().toISOString().slice(0,10);\n  const tanggal = new Date(tanggalStr);\n  const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][tanggal.getDay()];\n  return {\n    json: {\n      id_transaksi: `TRX-${tanggalStr.replace(/-/g,'')}-${Math.floor(Math.random()*900000)+100000}`,\n      waktu_input: now.toLocaleDateString('id-ID', {day:'2-digit', month:'long', year:'numeric'}),\n      tanggal: tanggalStr,\n      bulan: tanggal.getMonth() + 1,\n      tahun: tanggal.getFullYear(),\n      hari: hari,\n      tipe: item.tipe || \"\",\n      status: \"VALID\",\n      kategori: item.kategori || \"\",\n      sub_kategori: item.sub_kategori || \"\",\n      deskripsi: item.deskripsi || \"\",\n      nominal: Number(item.nominal) || 0,\n      dompet: item.dompet || \"\",\n      transfer_ke: item.transfer_ke || \"\",\n      metode_bayar: item.metode_bayar || \"\",\n      sumber_pemasukan: item.sumber_pemasukan || \"\",\n      vendor: item.vendor || \"\",\n      catatan: item.catatan || \"\",\n      tag: item.tag || \"\",\n      dibuat_oleh: String($('Telegram Trigger').first().json.message.from.id || \"\")\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        336
+      ],
+      "id": "786a578b-fe6e-4cd8-8186-59ebae216b52",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/{{ $('Get row(s) in sheet1').first().json['Sheet ID Google'] }}/edit",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1814937993,
+          "mode": "list",
+          "cachedResultName": "DATA_TRANSAKSI",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1YvbCZuH_Crkh3vUb7bOj_0yhwjaEBw2ygHai7JtCbZQ/edit#gid=1814937993"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID Transaksi": "={{ $json.id_transaksi }}",
+            "Waktu Input": "={{ $json.waktu_input }}",
+            "Tanggal": "={{ $json.tanggal }}",
+            "Bulan": "={{ $json.bulan }}",
+            "Tahun": "={{ $json.tahun }}",
+            "Hari": "={{ $json.hari }}",
+            "Tipe": "={{ $json.tipe }}",
+            "Status": "={{ $json.status }}",
+            "Kategori": "={{ $json.kategori }}",
+            "Sub-Kategori": "={{ $json.sub_kategori }}",
+            "Deskripsi": "={{ $json.deskripsi }}",
+            "Nominal": "={{ $json.nominal }}",
+            "Dompet": "={{ $json.dompet }}",
+            "Transfer Ke": "={{ $json.transfer_ke }}",
+            "Metode Bayar": "={{ $json.metode_bayar }}",
+            "Sumber Pemasukan": "={{ $json.sumber_pemasukan }}",
+            "Vendor": "={{ $json.vendor }}",
+            "Catatan": "={{ $json.catatan }}",
+            "Tag": "={{ $json.tag }}",
+            "Dibuat Oleh": "={{ $json.dibuat_oleh }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "ID Transaksi",
+              "displayName": "ID Transaksi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Waktu Input",
+              "displayName": "Waktu Input",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tanggal",
+              "displayName": "Tanggal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Bulan",
+              "displayName": "Bulan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tahun",
+              "displayName": "Tahun",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hari",
+              "displayName": "Hari",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipe",
+              "displayName": "Tipe",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Kategori",
+              "displayName": "Kategori",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sub-Kategori",
+              "displayName": "Sub-Kategori",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Deskripsi",
+              "displayName": "Deskripsi",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nominal",
+              "displayName": "Nominal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dompet",
+              "displayName": "Dompet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Transfer Ke",
+              "displayName": "Transfer Ke",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Metode Bayar",
+              "displayName": "Metode Bayar",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sumber Pemasukan",
+              "displayName": "Sumber Pemasukan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor",
+              "displayName": "Vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Catatan",
+              "displayName": "Catatan",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tag",
+              "displayName": "Tag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Dibuat Oleh",
+              "displayName": "Dibuat Oleh",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1696,
+        336
+      ],
+      "id": "b00a32dd-a5c7-4b37-8003-a25f319fa648",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MvLHS5YbyQnz7KUQ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $('Code in JavaScript3').all().map(i => i.json);\nconst count = items.length;\nconst escape = (str) => String(str).replace(/[_*[\\]()~`>#+\\-=|{}.!\\\\]/g, '\\\\$&');\nlet text = '';\nif (count <= 10) {\n  const rincian = items.map((item, i) => {\n    const deskripsiLines = item.deskripsi.split(',').map(d => escape(d.trim())).join('\\n');\n    const meta = [\n      `📂 ${escape(item.kategori)}`,\n      item.dompet ? `💳 ${escape(item.dompet)}` : '',\n      item.sumber_pemasukan ? `👤 ${escape(item.sumber_pemasukan)}` : ''\n    ].filter(Boolean).join('  \\\\|  ');\n    return `🏪 *${escape(item.vendor || item.deskripsi.split(',')[0].trim())}*\\n${deskripsiLines}\\n💰 Rp ${escape(item.nominal.toLocaleString('id-ID'))}\\n${meta}`;\n  }).join('\\n\\n');\n  text = `✅ *${escape(count)} transaksi berhasil dicatat\\\\!*\\n\\n🛒 *Rincian:*\\n\\n${rincian}`;\n} else {\n  const total = items.reduce((sum, i) => sum + i.nominal, 0);\n  text = `✅ *${escape(count)} transaksi berhasil dicatat\\\\!*\\n\\n💰 *Total: Rp ${escape(total.toLocaleString('id-ID'))}*`;\n}\nreturn [{ json: { summary: text } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        336
+      ],
+      "id": "e222a243-b6a1-4de1-beb9-e66cf1f1b26b",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.summary }}",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2144,
+        336
+      ],
+      "id": "dcba4d6d-b6a2-45b9-b797-0ed6c8e3d0a3",
+      "name": "Send a text message1",
+      "webhookId": "ea10d601-ad4d-4af7-a977-db1ce3a60079",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/getFile?file_id={{ $('Telegram Trigger').first().json.message.voice.file_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        368,
+        -16
+      ],
+      "id": "53dd837d-7152-4c98-a069-6675c833641a",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/file/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/{{ $json.result.file_path }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        576,
+        -16
+      ],
+      "id": "65eae2d5-abdb-4302-acb8-c9b983a7dd38",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_GROQ_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            },
+            {
+              "name": "language",
+              "value": "id"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1008,
+        -16
+      ],
+      "id": "6623bb8f-3710-421e-a23c-110a7d7a426c",
+      "name": "HTTP Request6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const binaryData = await this.helpers.getBinaryDataBuffer(0, 'data');\nreturn [{\n  json: $input.first().json,\n  binary: {\n    data: await this.helpers.prepareBinaryData(binaryData, 'audio.ogg', 'audio/ogg')\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -16
+      ],
+      "id": "bc3bc585-fda8-4bad-90e9-2195e14ca287",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.text.trim();\nreturn [{\n  json: {\n    message: {\n      text: text,\n      chat: $('Telegram Trigger').first().json.message.chat,\n      from: $('Telegram Trigger').first().json.message.from\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        -16
+      ],
+      "id": "c1682ced-b495-4212-bd57-e2e586a9efcc",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "=https://docs.google.com/spreadsheets/d/{{ $('Get row(s) in sheet1').first().json['Sheet ID Google'] }}/edit",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "DATA_TRANSAKSI",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        368,
+        -208
+      ],
+      "id": "115f2c50-67cd-4667-a134-65fef6b05df6",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MvLHS5YbyQnz7KUQ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all().map(i => i.json);\nlet userQuery = '';\ntry {\n  userQuery = $('Code in JavaScript6').first().json.message.text;\n} catch(e) {\n  userQuery = $('Telegram Trigger').first().json.message.text;\n}\nconst dataText = rows.slice(0, 100).map(r => \n  `${r['Tanggal']} | ${r['Tipe']} | ${r['Kategori']} | ${r['Deskripsi']} | Rp ${Number(r['Nominal']).toLocaleString('id-ID')} | ${r['Dompet']}`\n).join('\\n');\nreturn [{ json: { dataText, userQuery } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        -208
+      ],
+      "id": "563bafac-d733-499e-a1f4-048a0742ae0a",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_GROQ_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "llama-3.3-70b-versatile"
+            },
+            {
+              "name": "messages",
+              "value": "={{ [{role: \"system\", content: \"Kamu adalah analis keuangan pribadi. Jawab pertanyaan user berdasarkan data transaksi yang diberikan. Berikan analisa yang ringkas, detail, dan saran yang berguna. Gunakan bahasa Indonesia yang friendly. Gunakan emoji.\"}, {role: \"user\", content: \"Data transaksi:\\n\" + $json.dataText + \"\\n\\nPertanyaan: \" + $json.userQuery}] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        800,
+        -208
+      ],
+      "id": "b72fcc36-0deb-4806-8568-a19ec638b6fb",
+      "name": "HTTP Request7"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.first().json.choices[0].message.content;\nconst escape = (str) => String(str).replace(/[_*[\\]()~`>#+\\-=|{}.!\\\\]/g, '\\\\$&');\nreturn [{ json: { text: escape(text) } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1008,
+        -208
+      ],
+      "id": "8f20677f-a3f2-4b83-b2be-f8513b33dbb5",
+      "name": "Code in JavaScript8"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1232,
+        -208
+      ],
+      "id": "6c774397-1b45-4cf2-81ca-3515323733ce",
+      "name": "Send a text message2",
+      "webhookId": "d7fc4b40-6fe3-49c5-898b-7b0008bc5e3d",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "Laporan",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "dc9619bb-d67e-4231-9057-143e94ad572c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1456,
+        -16
+      ],
+      "id": "dc8bbef8-f543-471d-bcc9-146ca4be08f8",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1oeQfREUE7CjROYBete9mXIFBxDi4MwLbv2aMID3FLUY/edit?gid=1918773828#gid=1918773828",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1918773828,
+          "mode": "list",
+          "cachedResultName": "REGISTRY",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1oeQfREUE7CjROYBete9mXIFBxDi4MwLbv2aMID3FLUY/edit#gid=1918773828"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Chat ID Telegram",
+              "lookupValue": "={{ $json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -336,
+        288
+      ],
+      "id": "0cd5f798-0723-4932-860d-87ab0e640765",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "MvLHS5YbyQnz7KUQ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b6d2e72c-3f23-4521-b4ee-bbf547ae61b8",
+              "leftValue": "={{ $('Get row(s) in sheet1').first().json['Paket'] }}",
+              "rightValue": "basic",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        320
+      ],
+      "id": "10196885-638f-4b42-ae9d-62ce15937f66",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "46465aa2-1016-4bff-865f-4172a64026c4",
+              "leftValue": "={{ $('Get row(s) in sheet1').first().json['Paket'] }}",
+              "rightValue": "basic",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -320,
+        -32
+      ],
+      "id": "a07065ae-761a-49a4-ad72-74bbb2bdf278",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=❌ *Fitur ini hanya tersedia di Paket Pro\\.*\n\nUpgrade ke Pro untuk bisa kirim foto struk dan voice message\\.\nInfo upgrade hubungi admin\\.",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        576,
+        192
+      ],
+      "id": "de3ea2d0-99b1-4797-9f2e-b63084448aef",
+      "name": "Send a text message3",
+      "webhookId": "4967b815-4efa-47e1-af60-432958842705",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=❌ *Fitur ini hanya tersedia di Paket Pro\\.*\n\nUpgrade ke Pro untuk bisa kirim foto struk dan voice message\\.\nInfo upgrade hubungi admin\\.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        -144
+      ],
+      "id": "d38e7671-69bc-44c1-a477-ebb06f4b97d5",
+      "name": "Send a text message4",
+      "webhookId": "93501b24-dfd3-43a1-ae4e-17e37e74be25",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ea71742a-4f00-482d-bc13-3ad0933c44d5",
+              "leftValue": "={{ $json['Status'] }}",
+              "rightValue": "EXPIRED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -144,
+        288
+      ],
+      "id": "8a3beb6f-35d1-4c9c-bd0c-099370fb51b4",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').first().json.message.chat.id }}",
+        "text": "=⏰ *Akses kamu telah berakhir\\!*\n\nSilakan ketik /start di @ArcFinanceRegister\\_bot untuk upgrade atau perpanjang paket\\.",
+        "additionalFields": {
+          "parse_mode": "MarkdownV2"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        112
+      ],
+      "id": "b4d779c1-9c3d-40a6-9008-26372a534dcf",
+      "name": "Send a text message5",
+      "webhookId": "43e8f71a-8af4-4db4-8c54-80af50e3ee3a",
+      "credentials": {
+        "telegramApi": {
+          "id": "qaNFDDq5VsgcXhQc",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request6": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request7": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1760f688-8c4f-4a6d-92f3-a110b7725951",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a2e718e9928413ea443c2d5bfc0a0b665b8c0b82e09aa42ba16c6b74d528dea"
+  },
+  "id": "ulhV5pMLe4UuuK7o",
+  "tags": []
+}
