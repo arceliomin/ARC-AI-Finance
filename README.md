@@ -120,8 +120,6 @@ Dashboard Update
 
 ---
 
-# 📷 Screenshots
-
 ## 📸 Screenshots
 
 ### 🤖 Telegram Chat
