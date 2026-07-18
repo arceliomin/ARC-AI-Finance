@@ -498,7 +498,7 @@
     },
     {
       "parameters": {
-        "url": "=https://api.telegram.org/file/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/{{$json.result.file_path}}",
+        "url": "=https://api.telegram.org YOUR_TELEGRAM_BOT_TOKEN/file//{{$json.result.file_path}}",
         "options": {
           "response": {
             "response": {
@@ -849,7 +849,7 @@
     },
     {
       "parameters": {
-        "url": "=https://api.telegram.org/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/getFile?file_id={{ $('Telegram Trigger').first().json.message.voice.file_id }}",
+        "url": "=https://api.telegram.org/YOUR_TELEGRAM_BOT_TOKEN/getFile?file_id={{ $('Telegram Trigger').first().json.message.voice.file_id }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -863,7 +863,7 @@
     },
     {
       "parameters": {
-        "url": "=https://api.telegram.org/file/bot8853869554:AAEsuwBKsFUDeKUuCt66FLutrseCKyYX3Ko/{{ $json.result.file_path }}",
+        "url": "=https://api.telegram.org/file/YOUR_TELEGRAM_BOT_TOKEN/{{ $json.result.file_path }}",
         "options": {
           "response": {
             "response": {
