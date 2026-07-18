@@ -122,7 +122,29 @@ Dashboard Update
 
 # 📷 Screenshots
 
-(Add screenshots here)
+## 📸 Screenshots
+
+### 🤖 Telegram Chat
+
+![Telegram Chat](images/telegram-chat.png)
+
+---
+
+### 🧾 Receipt OCR
+
+![Receipt OCR](images/receipt-ocr.png)
+
+---
+
+### 📊 Dashboard
+
+![Dashboard](images/dashboard.png)
+
+---
+
+### ⚙️ n8n Workflow
+
+![n8n Workflow](images/n8n-workflow.png)
 
 ---
 
